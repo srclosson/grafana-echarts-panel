@@ -4,7 +4,12 @@ Grafana集成Echarts
 Grafana v4.1.x 
 Echarts v4.0.x
 
-自定义数据源部分的代码出自这位大神 https://github.com/Billiballa/dxc-echarts-panel
+### Work by srclosson
+This is my attempt to do a couple of things
+- Make echarts available in english, rather than chinese
+- Include the leaflet.js echarts plugin
+- Include echarts 3d (still a work in progress)
+- Make the javascript editor more powerful for editing options
 
 ## 中国地图
 **ES数据源**

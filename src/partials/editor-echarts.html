@@ -27,5 +27,17 @@
         </div>
     </div>
 
-    <textarea class="gf-form-input" ng-model="ctrl.panel.EchartsOption" rows="20" style="width:100%" ng-change="ctrl.onDataReceived()" ng-model-onblur></textarea>
+    <!-- <textarea class="gf-form-input" ng-model="ctrl.panel.EchartsOption" rows="20" style="width:100%" ng-change="ctrl.onDataReceived()" ng-model-onblur></textarea> -->
+    
+    <div class="editor-row">
+        <p />
+        <h5 class="section-heading">JavaScript Code: <code>onInit(ctrl, echartsData)</code></h5>
+        <ul style="padding-left: 40px;">
+        <li>@param&emsp;{MetricsPanelCtrl}&emsp;ctrl&emsp;Instance of current grafana panel object.</li>
+        <li>@param&emsp;{Object}&emsp;echartsData&emsp;The data from your Metrics query</li>
+        </ul>
+        <div id="EchartsOption" class="gf-form-input" ng-model="ctrl.panel.EchartsOption" ng-show="ctrl.doShowAceJs('EchartsOption')" ng-change="ctrl.onDataReceived()" style="height: 500px; width: 100%; margin-top: 8px;">Type in a word like "will" below and press ctrl+space or alt+space to get "rhyme completion"</div>
+
+        <!--textarea class="gf-form-input ng-not-empty" style="font-family:'Courier New', Courier, monospace;min-height: 500px" ng-model="ctrl.panel.js_init_code" ng-change="ctrl.setInitFunction(); ctrl.render();"></textarea-->
+    </div>
 </div>

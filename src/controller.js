@@ -1,17 +1,36 @@
+/* eslint no-eval: 0 */
+
 import { MetricsPanelCtrl } from 'app/plugins/sdk';
 import _ from 'lodash';
 import kbn from 'app/core/utils/kbn';
 
-import echarts from './libs/echarts.min';
+import echarts from './libs/echarts-en.min';
+//import ecUtil from './libs/echarts-en.common.min';
+import ecStat from './libs/ecStat.min.js';
+import './libs/extra';
 import './libs/dark';
+import './libs/leaflet';
+import './libs/bmap.min.js';
+import './libs/dataTool.min.js';
+import './libs/echarts-leaflet';
+import './libs/leaflet.css!';
 import './style.css!';
-import './libs/china.js';
-import './libs/bmap.js';
-import './libs/getBmap.js';
+import './libs/Canada.js';
+import './libs/moment-with-locales.min.js';
+import './libs/moment-with-locales.min';
+import './libs/moment-timezone-with-data';
+import ace from './node_modules/brace/index.js';
+import './node_modules/brace/ext/language_tools.js';
+import './node_modules/brace/theme/tomorrow_night_bright.js';
+import './node_modules/brace/mode/javascript.js';
+
+//import './libs/bmap.js';
+//import './libs/getBmap.js';
+//import './libs/echarts-gl';
 
 import DataFormatter from './data_formatter';
 
-
+//echarts.util = ecUtil;
 
 export class Controller extends MetricsPanelCtrl {
 
@@ -38,7 +57,8 @@ export class Controller extends MetricsPanelCtrl {
         this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         this.events.on('panel-initialized', this.render.bind(this));
-
+        this.editors = {};
+        
         this.refreshData();
     }
 
@@ -66,9 +86,42 @@ export class Controller extends MetricsPanelCtrl {
     onInitEditMode() {
         this.addEditorTab('Customize Data', 'public/plugins/grafana-echarts-panel/partials/editor-ds.html', 2);
         this.addEditorTab('Echarts Option', 'public/plugins/grafana-echarts-panel/partials/editor-echarts.html', 3);
+        this.panel.doInit = Function('ctrl', 'svgnode', this.panel.EchartsOption); // jshint ignore:line
     }
-
-
+    
+    doShowAceJs(nodeId) {
+      setTimeout(function() {
+          if ($('#'+nodeId).length === 1) {
+              this.editors[nodeId] = ace.edit(nodeId);
+              $('#'+nodeId).attr('id', nodeId + '_initialized');
+              this.editors[nodeId] .setValue(this.panel[nodeId], 1);
+              this.editors[nodeId] .getSession().on('change', function() {
+                  var val = this.editors[nodeId] .getSession().getValue();
+                  this.panel[nodeId] = val;
+                  try {
+                    this.setInitFunction();
+                    this.render();
+                  }
+                  catch (err) {
+                      console.error(err);
+                  }
+              }.bind(this));
+              this.editors[nodeId] .setOptions({
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
+                  theme: 'ace/theme/tomorrow_night_bright',
+                  mode: 'ace/mode/javascript',
+                  showPrintMargin: false
+              });
+          }
+      }.bind(this), 100);
+      return true;
+    }
+    
+    setInitFunction() {
+        this.panel.doInit = Function('ctrl', 'svgnode', this.panel.EchartsOption); // jshint ignore:line
+    }
+    
     refreshData() {
         let _this = this, xmlhttp;
 
@@ -158,7 +211,11 @@ export class Controller extends MetricsPanelCtrl {
                 myChart.clear();
                 echartsData = ctrl.data;
 
-                eval(ctrl.panel.EchartsOption); // jshint ignore:line
+				try {
+					eval(ctrl.panel.EchartsOption); // jshint ignore:line
+				} catch (ex) {
+					console.error(ex);
+				}
 
                 myChart.setOption(option);
             }
